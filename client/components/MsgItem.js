@@ -9,7 +9,8 @@ const MsgItem = ({
   onUpdate,
   onDelete,
   isEditing,
-  startEdit
+  startEdit,
+  myId
 }) => {
 
   return (
@@ -33,10 +34,14 @@ const MsgItem = ({
           : text
       }
 
-      <div className="messages_buttons">
-        <button onClick={startEdit}>수정</button>
-        <button onClick={() => onDelete(id)}>삭제</button>
-      </div>
+      {
+        // 수정, 삭제 인증 권한
+        myId === userId && <div className="messages_buttons">
+          <button onClick={startEdit}>수정</button>
+          <button onClick={() => onDelete(id)}>삭제</button>
+        </div>
+      }
+
     </li>
   )
 }

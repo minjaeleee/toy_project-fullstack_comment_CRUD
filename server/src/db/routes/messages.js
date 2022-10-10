@@ -40,8 +40,8 @@ const messagesRoute = [
         userId: body.userId,
         timestamp: Date.now()
       }
-      const result = msgs.unshift(newMsg)
-      writeDB('messages', result)
+      msgs.reverse().push(newMsg)
+      writeDB('messages', msgs)
       res.send(newMsg)
     }
   },
@@ -57,8 +57,8 @@ const messagesRoute = [
         if (msgs[targetIndex].userId !== body.userId) throw 'no Users'
 
         const newMsgs = { ...msgs[targetIndex], text: body.text }
-        const result = msgs.splice(targetIndex, 1, newMsgs)
-        writeDB('messages', result)
+        msgs.splice(targetIndex, 1, newMsgs)
+        writeDB('messages', msgs)
         res.send(newMsgs)
       } catch (err) {
         res.status(500).send({ error: err })
@@ -69,15 +69,19 @@ const messagesRoute = [
     //DELETE messages
     method: 'delete',
     route: '/messages/:id',
-    handler: ({ body, params: { id } }, res) => {
+    handler: ({
+      body,
+      params: { id },
+      // client req: params = server req: query
+      query: { userId }
+    }, res) => {
       try {
         const msgs = readDB('messages')
         const targetIndex = msgs.findIndex(msg => msg.id === id)
         if (targetIndex < 0) throw 'no Messages';
-        if (msgs[targetIndex].userId !== body.userId) throw 'no Users'
-
-        const result = msgs.splice(targetIndex, 1)
-        writeDB('messages', result)
+        if (msgs[targetIndex].userId !== userId) throw 'no Users'
+        msgs.splice(targetIndex, 1)
+        writeDB('messages', msgs)
         res.send(id)
       } catch (err) {
         res.status(500).send({ error: err })
