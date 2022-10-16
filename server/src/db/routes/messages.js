@@ -55,7 +55,6 @@ const messagesRoute = [
         const targetIndex = msgs.findIndex(msg => msg.id === id)
         if (targetIndex < 0) throw 'no Messages';
         if (msgs[targetIndex].userId !== body.userId) throw 'no Users'
-
         const newMsgs = { ...msgs[targetIndex], text: body.text }
         msgs.splice(targetIndex, 1, newMsgs)
         writeDB('messages', msgs)
