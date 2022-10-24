@@ -15,6 +15,7 @@ const MsgList = () => {
   const { query: { userId = '' } } = useRouter()
   const fetchMoreEl = useRef(null)
   const intersecting = useInfiniteScroll(fetchMoreEl)
+  // console.log("intersecting", intersecting)
 
   const onCreate = async text => {
     const newMsg = await fetcher('post', '/messages', { text, userId })
@@ -50,7 +51,7 @@ const MsgList = () => {
   const doneEditing = () => setEditingID(null)
 
   const getMessages = async () => {
-    const newMsgs = await fetcher('get', '/messages', { params: { cursor: msgs[msgs.length - 1].id || '' } })
+    const newMsgs = await fetcher('get', '/messages', { params: { cursor: msgs ? msgs[msgs.length - 1].id : '' } })
     setMsgs(newMsgs)
   }
 
@@ -59,7 +60,9 @@ const MsgList = () => {
   }, [])
 
   useEffect(() => {
-    if (intersecting) getMessages
+    if (intersecting) {
+      getMessages()
+    }
   }, [intersecting])
 
 
@@ -80,7 +83,7 @@ const MsgList = () => {
           />)
         }
       </ul>
-      <div useRef={fetchMoreEl}>ㄴㄹㄹㄴ</div>
+      <div ref={fetchMoreEl} style={{ height: "200px" }} />
     </>
   )
 }
