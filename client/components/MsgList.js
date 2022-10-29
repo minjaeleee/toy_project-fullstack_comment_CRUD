@@ -9,8 +9,8 @@ const userIds = ['philip', 'jay', 'minjae']
 const getRandomUserId = () => userIds[Math.round(Math.random())]
 
 // MsgInput => Create
-const MsgList = () => {
-  const [msgs, setMsgs] = useState(null)
+const MsgList = ({ serverMsgs }) => {
+  const [msgs, setMsgs] = useState(serverMsgs)
   const [editingID, setEditingID] = useState(null)
   const [hasNext, setHasNext] = useState(true)
   const { query: { userId = '' } } = useRouter()
