@@ -12,6 +12,7 @@ const getRandomUserId = () => userIds[Math.round(Math.random())]
 const MsgList = () => {
   const [msgs, setMsgs] = useState(null)
   const [editingID, setEditingID] = useState(null)
+  const [hasNext, setHasNext] = useState(true)
   const { query: { userId = '' } } = useRouter()
   const fetchMoreEl = useRef(null)
   const intersecting = useInfiniteScroll(fetchMoreEl)
@@ -52,15 +53,18 @@ const MsgList = () => {
 
   const getMessages = async () => {
     const newMsgs = await fetcher('get', '/messages', { params: { cursor: msgs ? msgs[msgs.length - 1].id : '' } })
-    setMsgs(newMsgs)
+    if (newMsgs.length === 0) setHasNext(false)
+    setMsgs(msgs => {
+      if (msgs) {
+        return [...msgs, ...newMsgs]
+      } else {
+        return newMsgs
+      }
+    })
   }
 
   useEffect(() => {
-    getMessages()
-  }, [])
-
-  useEffect(() => {
-    if (intersecting) {
+    if (intersecting && hasNext) {
       getMessages()
     }
   }, [intersecting])
